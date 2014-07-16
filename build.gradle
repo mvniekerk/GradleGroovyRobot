@@ -1,0 +1,40 @@
+apply plugin: 'groovy'
+
+repositories {
+	mavenCentral()
+	flatDir { dirs 'lib' }
+}
+
+project.ext.set("robovmver","0.0.14")
+def robovmver = "0.0.14"
+
+dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.4.0-beta-1'
+	compile "org.robovm:robovm-rt:$robovmver"
+	compile "org.robovm:robovm-objc:$robovmver"
+	compile "org.robovm:robovm-cocoatouch:$robovmver"
+}
+
+project.ext.set("robovm_home", "/Users/mike/Documents/CO/FrameworksAndLibraries/robovm/robovm-$robovmver")
+
+// main class 
+String mainClass = "GradleGroovyRobot"
+def groovyJar = ""
+
+task findGroovyJar << {
+	groovyJar = project.configurations.compile.find { it.name.startsWith("groovy-all-") }
+}
+
+// compile bytecode to llvm and run in the ios simulator
+task run (dependsOn: [build, findGroovyJar]){
+
+    doFirst {
+        println(">> Running RoboVM")
+        String cmd = "$project.robovm_home/bin/robovm -verbose -arch x86 -os ios -cp $project.robovm_home/lib/robovm-objc.jar:$project.robovm_home/lib/robovm-cocoatouch.jar:$projectDir/build/classes/main/:$groovyJar -run $mainClass"
+        def proc = cmd.execute()
+
+        proc.in.eachLine {line -> println line}
+        proc.err.eachLine {line -> System.err.println( 'ERROR: ' + line)}
+        proc.waitFor()
+    }
+}
