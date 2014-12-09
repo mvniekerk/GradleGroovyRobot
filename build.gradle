@@ -5,11 +5,11 @@ repositories {
 	flatDir { dirs 'lib' }
 }
 
-project.ext.set("robovmver","0.0.14")
-def robovmver = "0.0.14"
+project.ext.set("robovmver","1.0.0-alpha-04")
+def robovmver = "1.0.0-alpha-04"
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.4.0-beta-1'
+	compile 'org.codehaus.groovy:groovy-all:2.4.0-beta-4'
 	compile "org.robovm:robovm-rt:$robovmver"
 	compile "org.robovm:robovm-objc:$robovmver"
 	compile "org.robovm:robovm-cocoatouch:$robovmver"

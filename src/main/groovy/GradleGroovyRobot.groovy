@@ -12,6 +12,7 @@ import org.robovm.apple.uikit.UIControl
 import org.robovm.apple.uikit.UIEvent
 import org.robovm.apple.uikit.UIScreen
 import org.robovm.apple.uikit.UIColor
+import org.robovm.apple.uikit.UIApplicationLaunchOptions
 import org.robovm.apple.coregraphics.CGRect
 import groovy.transform.CompileStatic;
 
@@ -25,13 +26,13 @@ class GradleGroovyRobot extends UIApplicationDelegateAdapter {
 	
 	@Override
 	public boolean didFinishLaunching(UIApplication application,
-			NSDictionary launchOptions) {
+			UIApplicationLaunchOptions launchOptions) {
 		button = UIButton.create(UIButtonType.RoundedRect)
 		button.setFrame(new CGRect(115.0f, 121.0f, 91.0f, 37.0f))
 		button.setTitle("Click me!", UIControlState.Normal)
 		
 		window = new UIWindow(UIScreen.getMainScreen().getBounds());
-		window.setBackgroundColor(UIColor.colorLightGray());
+		window.setBackgroundColor(UIColor.lightGray());
 		window.addSubview(button);
 		window.makeKeyAndVisible();
 		return true
