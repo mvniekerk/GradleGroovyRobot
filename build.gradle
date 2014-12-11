@@ -8,33 +8,35 @@ repositories {
 def robovmver = "1.0.0-beta-01"
 project.ext.set("robovmver",robovmver)
 
+configurations {
+	robovm
+}
+
 dependencies {
-	compile 'org.codehaus.groovy:groovy:2.4.0-beta-4-grooid'
+	robovm 'org.codehaus.groovy:groovy:2.4.0-beta-4:grooid'
+	compile 'org.codehaus.groovy:groovy:2.4.0-beta-4'
+
 	compile "org.robovm:robovm-rt:$robovmver"
 	compile "org.robovm:robovm-objc:$robovmver"
 	compile "org.robovm:robovm-cocoatouch:$robovmver"
 }
 
-project.ext.set("robovm_home", "/Users/mike/Documents/CO/FrameworksAndLibraries/robovm/robovm-$robovmver")
-
-// main class 
-String mainClass = "GradleGroovyRobot"
-def groovyJar = ""
-
-task findGroovyJar << {
-	groovyJar = project.configurations.compile.find { it.name.startsWith("groovy-") }
+ext.robovmHome=System.getenv('ROBOVM_HOME')
+if (!robovmHome) {
+	throw new GradleException("Please set the ROBOVM_HOME environment variable")
 }
 
-// compile bytecode to llvm and run in the ios simulator
-task run (dependsOn: [build, findGroovyJar]){
+String mainClass = "GradleGroovyRobot"
 
-    doFirst {
-        println(">> Running RoboVM")
-        String cmd = "$project.robovm_home/bin/robovm -verbose -arch x86 -os ios -cp $project.robovm_home/lib/robovm-objc.jar:$project.robovm_home/lib/robovm-cocoatouch.jar:$projectDir/build/classes/main/:$groovyJar -run $mainClass"
-        def proc = cmd.execute()
-
-        proc.in.eachLine {line -> println line}
-        proc.err.eachLine {line -> System.err.println( 'ERROR: ' + line)}
-        proc.waitFor()
-    }
+task robovm(type: Exec) {
+	dependsOn jar
+	commandLine = ["$robovmHome/bin/robovm"]
+	//args += '-debug'
+	args += ['-cp', (files(sourceSets.main.output.classesDir)+configurations.robovm).asPath]
+	//args += ['-d', "${buildDir}/bin"]
+	args += ['-o', project.name]
+	args += ['-run', "$mainClass"]
+	doFirst {
+		logger.lifecycle "Executing $commandLine"
+	}
 }
