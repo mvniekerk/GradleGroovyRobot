@@ -1,15 +1,15 @@
 apply plugin: 'groovy'
 
 repositories {
-	mavenCentral()
+	jcenter()
 	flatDir { dirs 'lib' }
 }
 
-project.ext.set("robovmver","1.0.0-alpha-04")
-def robovmver = "1.0.0-alpha-04"
+def robovmver = "1.0.0-beta-01"
+project.ext.set("robovmver",robovmver)
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.4.0-beta-4'
+	compile 'org.codehaus.groovy:groovy:2.4.0-beta-4-grooid'
 	compile "org.robovm:robovm-rt:$robovmver"
 	compile "org.robovm:robovm-objc:$robovmver"
 	compile "org.robovm:robovm-cocoatouch:$robovmver"
@@ -22,7 +22,7 @@ String mainClass = "GradleGroovyRobot"
 def groovyJar = ""
 
 task findGroovyJar << {
-	groovyJar = project.configurations.compile.find { it.name.startsWith("groovy-all-") }
+	groovyJar = project.configurations.compile.find { it.name.startsWith("groovy-") }
 }
 
 // compile bytecode to llvm and run in the ios simulator
