@@ -34,7 +34,7 @@ task robovm(type: Exec) {
 	commandLine = ["$robovmHome/bin/robovm"]
 	//args += '-debug'
 	args += ['-cp', (files(sourceSets.main.output.classesDir)+configurations.robovm).asPath]
-	//args += ['-d', "${buildDir}/bin"]
+	args += ['-d', "${buildDir}/bin"]
 	args += ['-o', project.name]
 	args += ['-run', "$mainClass"]
 	doFirst {
